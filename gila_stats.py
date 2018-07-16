@@ -18,16 +18,20 @@ files = [f for f in os.listdir('.') if os.path.isfile(f)]
 for f in files:
     if f.endswith('.stats')==True:
         sample_list.append(f)
-#print('printing sample list:')
-#print(sample_list)
+print('printing sample list:')
+print(sample_list)
+
+#do I want seperate RNA and DNA sample lists? Or would it be fine just to run them all the same way?
+#pros: not having to rewrite chunks of code
+#cons: will have to parse later to use the data, but that seems pretty easy using bash since I can grep rna.
 
 
 #now we just need to read in the files (file1 and file_b) in the right format and we are off to the races.
 # this block takes files in the current directory that match the pattern parameters.txt and puts the contents into a list
 #the resulting list is a list of parameters of the stats file for use in the dictionary
 files = [f for f in os.listdir('.') if os.path.isfile(f)]
-#print('printing files')
-#print(files)
+print('printing files')
+print(files)
 for f in files:
     if f.endswith('parameters.txt')==True:
         with open(f , 'r') as readfile:
@@ -35,6 +39,8 @@ for f in files:
                 parameter = line.strip()
                 if parameter != '':
                     parameters.append(parameter)
+#throwing an error because the rna lists didnt come with a params file. Did the DNA come with a params file? FIX ME<------------------
+#maybe the easy way to fix is for each rna file append parameters.txt? Really would like to get some version control going. 
 #print(parameters)
 #print(len(parameters))
 #print('printing parameters list:')
@@ -58,11 +64,9 @@ for f in files: #for each file in current directory
 #formatting data from string to numerical values
 #I need some to remain ints, and some will require floats with several decimal places. Can I just do all to float? Will that mess up the other values by rounding?
 #data = list(map(int,data)) NO
+
 for item in data:
     float(item)
-
-
-
 
 #print('printing data list:')
 #print(data)
@@ -88,30 +92,18 @@ for x in sample_list:
     start += len(parameters)
 print('printing entire gilas dictionary:')
 print(gilas)
+#f=open(gilas_dictionary.txt, "w+") #create a text file for this all to go into
+#f.close()
 
 #print(gilas['G_10_dna.gila1.dna.mkdup.sorted.bam.stats'])
 
 #Ok so now that we can populate our dictionary just like that, we can automate some calculations...
+print(gilas[sample_list[1]]['data'][parameters[0]]) #example of usage; will print the characteristic for the lizard in question
+print(gilas[sample_list[1]]['data']) #another example of usage; will print all characteristics for the lizard in question
+print(gilas[sample_list[1]]) #a stupid example; does same as above except makes the word 'data' visible.
+# I do see a flaw that I might have to memorize which order the lizards are in. I hate memorizing things. FIX ME!<-------------
 
-#print(gilas[sample_list[1]]['data'][parameters[0]]) #this works nicely now!
-#num1 = gilas[sample_list[1]]['data'][parameters[0]]
-#print(num1)
-#print('divided by')
-
-#num2 = gilas[sample_list[1]]['data'][parameters[3]]
-#print(num2)
-
-#print(' = ')
-#calc = np.divide(float(num1),float(num2))
-#print(calc)
-
-# so that is how the math is gonna work in a basic sense
-# lets get an actual useful number, like coverage.
-# using the equation coverage = ('average length')('reads mapped')/('total length') ?????
-
-#namedtuple
-#ordereddict make sure data is not rearranged.
-
+#PARAMETERS FOR REFERENCE~~~~~~~~~~~~~~~~~~~~~~~~~
  #0. ‘raw total sequences:',
  #1.  'filtered sequences:',
  #2. ’sequences:',
@@ -142,10 +134,8 @@ print(gilas)
  #28. ’outward oriented pairs:',
  #29. ’pairs with other orientation:',
  #30. ’pairs on different chromosomes:'
-
-#print the mismatches for every lizard
-#lets try a nonsense calculation with that data
-#excellent, now lets try to get an actual useful calculation
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#example calculation:
 x=0
 while(x < int(len(sample_list))):
     #print(gilas[sample_list[x]]['data'][parameters[20]])
@@ -157,7 +147,7 @@ while(x < int(len(sample_list))):
 
 
 #going to calculate coverage for each lizard
-#what do I want to do with these calculations?
+# using the equation coverage = ('average length')('reads mapped')/('total length')
 coverages = []
 x=0
 while(x < int(len(sample_list))):
@@ -168,8 +158,10 @@ while(x < int(len(sample_list))):
     coverages.append(C)
     x=x+1
 print("coverages:")
-print(coverages) #I will figure out later what I want to do
-# I guess at the end of the day the calculations are done like this and they are pretty easy.
+print(coverages)
+#gonna need to add coverages to parameters, and then to gilas dictionary if we are going to include this data.
+#OR option two is to write calculations to a seperate file!
+# we are going to want to make sure that the values of coverage are above a threshold, do I want to do that here or later in R. Probably later in R because I can tweak params more easily by hand after reviewing the data.
 # should also be easy to add these to the dictionary as done above for parameters and data lists
 
 #calc percent properly paired
@@ -201,18 +193,11 @@ def get_data(sample_number, parameter_number):
         value = float(gilas[sample_list[sample_number]]['data'][parameters[parameter_number]])
         print("getting data for sample " + str(sample_number))
         print(value) #should be float probably. Any problems with using float?
+        #should return value so I can use it! waiting to figure out version control before making too many changes.
 
-#EXPECTED COVERAGE
+#EXPECTED COVERAGE, testing the get_data function.
 expected_coverages = []
 for sample in range(0,len(sample_list)):
     G = get_data(sample,15)
 #print(G)
-
-#I want to calculate reads mapped over raw total as a percentage and maybe mark those that dont get a ration of greater that 95%
-coverage_cutoff
-for sample in range(0,len(sample_list)):
-    reads_mapped = int(gilas[sample_list[x]]['data'][parameters[21]])
-    total_reads = int(gilas[sample_list[x]]['data'][parameters[11]])
-    coverage = reads_mapped/total_reads*100
-    if coverage < coverage_cutoff:
-        print(sample "coverage does not meet specified value of: " coverage_cutoff)
+#get_data works pretty good.
