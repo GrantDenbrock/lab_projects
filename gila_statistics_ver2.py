@@ -1,5 +1,9 @@
 import os
-myfiles = [
+import numpy as np
+import pandas as pd
+
+#import glob package??? to get filenames...
+filenames = [
 'G_10_dna.gila1.dna.mkdup.sorted.bam.stats',
 'G_16_dna.gila1.dna.mkdup.sorted.bam.stats',
 'G_30_dna.gila1.dna.mkdup.sorted.bam.stats',
@@ -7,47 +11,13 @@ myfiles = [
 'G_KI01_dna.gila1.dna.mkdup.sorted.bam.stats',
 'G_L_dna.gila1.dna.mkdup.sorted.bam.stats'
 ]
-#put fome parseargs here to input files.
 
-class_list = []
-def make_names():
-    for file in myfiles:
-        samplename = file.split('.gila1.')[0] #stores a new string variable
-        class_list.append(str(samplename))
+list_of_dfs = [pd.read_csv(filename, sep = ':') for filename in filenames]
+for dataframe, filename in zip(list_of_dfs, filenames):
+  dataframe['filename'] = filename
 
-def make_class():
-    for x in class_names:
-        x = Gila()
+combined_df = pd.concat(list_of_dfs, ignore_index=True, axis=1)
+#if datatype of df column != int remove it except if it is column 1
+#then fix the column names
 
-def pop_class():
-    for x in myfiles:
-        with open(x,'r') as readfile:
-            for classname in class_names:
-                if readfile.starstwith(classname):
-                    for line in readfile:
-
-
-class Gila:
-    def __init__(self):
-        print('class instantiated.')
-    def print_sequences(self):
-        print(self.sequences)
-
-# for file in myfiles:
-#     samplename = file.split('.gila1.')[0] #stores a new string variable
-#     print('printing samplename:', samplename)
-#     samplename = Gila() #turns the string into a class
-#     print('checking if samplename is now a class', samplename)
-#     with open(file,'r') as readfile:
-#         for line in readfile:
-#             key, value = line.split(':')
-#             samplename.key = value #is this not working? How can I check??
-# G_L_dna.print_sequences()
-#
-#
-class_list = []
-for x in class_list:
-    x = Gila()
-    for x in myfiles:
-        with open(f,'r') as readfile:
-            for line in readfile:
+print(combined_df)
