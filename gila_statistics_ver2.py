@@ -12,19 +12,21 @@ filenames = [
 'G_L_dna.gila1.dna.mkdup.sorted.bam.stats'
 ]
 
-list_of_dfs = [pd.read_csv(filename, sep = ':') for filename in filenames]
+dataframe = pd.read_csv(filenames[0], sep = ':')
+
+for filename in filenames:
+    df = pd.read_csv(filename, sep = ':')
+    print('printing df', df)
+    dataframe = pd.merge(dataframe, df, how = 'outer', on = 'raw total sequences')
+
+print('printing new dataframe')
+print(dataframe)
 
 
-# for dataframe, filename in zip(list_of_dfs, filenames):
-#   dataframe['filename'] = filename #drop clumn 3 out of this to make it pretty??
 
-combined_df = pd.concat(list_of_dfs, ignore_index=True, axis=1) #now just throw in a colnames argument or something and we're golden.
-#if datatype of df column != int remove it except if it is column 1
-#then fix the column names
-#remove every third column? This seems gross. Just leave it?
 
-#now we just clean it up a bit
-# for x in range(3*len(filenames)):
-#     if x % 3 == 0:
-#         combined_df.drop(x)
-print(combined_df)
+
+# list_of_dfs = [pd.read_csv(filename, sep = ':', ) for filename in filenames]
+# for filename in filenames:
+#     clean_df = pd.merge(clean_df, list_of_dfs[filename], how = "right" , on = "x1")
+# print(clean_df)
