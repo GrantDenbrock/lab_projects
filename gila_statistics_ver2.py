@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import pandas as pd
+import re
 
 #import glob package??? to get filenames...
 filenames = [
@@ -12,21 +13,18 @@ filenames = [
 'G_L_dna.gila1.dna.mkdup.sorted.bam.stats'
 ]
 
-dataframe = pd.read_csv(filenames[0], sep = ':')
+dataframe = pd.read_csv(filenames[0], sep = ':', header = None)
+print('printing df1', dataframe)
 
-for filename in filenames:
-    df = pd.read_csv(filename, sep = ':')
-    print('printing df', df)
-    dataframe = pd.merge(dataframe, df, how = 'outer', on = 'raw total sequences')
+for filename in filenames[1:]:
+    df = pd.read_csv(filename, sep = ':', comment = '#', header = None)
+    dataframe = pd.merge(dataframe, df, how = 'outer', on = 0) #on = 0?
+
+dataframe.columns = ['samples'] + filenames
+dataframe = dataframe.replace(r'\t','', regex=True)
+dataframe = dataframe.transpose()
+dataframe.columns = dataframe.iloc[0]
+df2 = dataframe.iloc[1:]
 
 print('printing new dataframe')
-print(dataframe)
-
-
-
-
-
-# list_of_dfs = [pd.read_csv(filename, sep = ':', ) for filename in filenames]
-# for filename in filenames:
-#     clean_df = pd.merge(clean_df, list_of_dfs[filename], how = "right" , on = "x1")
-# print(clean_df)
+print(df2)
