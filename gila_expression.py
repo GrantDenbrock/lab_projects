@@ -1,6 +1,7 @@
 import argparse
+from statistics import mean
 
-def parse_args(): #FIXME
+def parse_args():
     parser = argparse.ArgumentParser(
         description="This script collects transcript expression data output by Stringtie and calculates"
         "Sex-specific mean FPKM values per scaffold.")
@@ -19,6 +20,16 @@ def parse_args(): #FIXME
 
     return args
 
+def get_transcript_average(transcript,dict,sex): #seperating by sex allows us to automatically filter male and fpkm.
+    for transcript in dict:
+        if sex == 'm':
+            male_list = dict[transcript]['m']
+            print(mean(male_list))
+        else:
+            female_list = dict[transcript]['f']
+            print(mean(female_list))
+
+            
 def main():
     t_ids = {}
     t_data = {}
@@ -41,11 +52,20 @@ def main():
                 if tid not in t_data:
                     t_data[tid] = {'m': [], 'f': []}
                 if args.sex[idx] == 'male':
-                    t_data[tid]['m'].append(fpkm)
+                    t_data[tid]['m'].append(float(fpkm))
                 else:
-                    t_data[tid]['f'].append(fpkm)
+                    t_data[tid]['f'].append(float(fpkm))
 
     print(t_data)
+    for ts in range(len(t_data)):
+        male_ts = get_transcript_average(ts,t_data, 'm')
+        fem_ts = get_transcript_average(ts,t_data, 'f')
+        print('The average male FPKM for transcript: '+ ts + ' is ' + male_ts + 'and the average female FPKM for transcript: ' + ts + ' is ' + fem_ts)
+
+
+
+
+
 
 if __name__ == "__main__":
     main()
