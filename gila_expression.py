@@ -82,17 +82,19 @@ def main():
             out_dict[scaff]['m_sum'] += mean_table[ts]['m']
             out_dict[scaff]['f_sum'] += mean_table[ts]['f']
     print("done")
-    # len_dict = {}
-    # with open(args.fai,'r') as readfile:
-    #     for line in readfile:
-    #         line_split = line.split()
-    #         len_dict[line_split[0]]=line_split[1]
-    #
-    # len_dict_df = pd.DataFrame.from_dict(
-    #     len_dict, orient='index').reset_index().rename(
-    #         index=str, columns={'index': 'scaffold', 0:'length'})
 
-    print(len(out_dict))
+
+    len_dict = {}
+    with open(args.fai,'r') as readfile:
+        for line in readfile:
+            line_split = line.split()
+            len_dict[line_split[0]]=line_split[1]
+
+    len_dict_df = pd.DataFrame.from_dict(
+        len_dict, orient='index').reset_index().rename(
+            index=str, columns={'index': 'scaffold', 0:'length'})
+
+    print(len(mean_table))
     print(len(t_ids))
     table_df = pd.DataFrame.from_dict(out_dict, orient='index').reset_index()
     table_df = table_df.rename(index=str, columns={'index': 'scaffold','count': 'trans_count', 'm_sum': 'male_sum', 'f_sum': 'female_sum'})
@@ -100,11 +102,11 @@ def main():
     table_df['female_mean'] = table_df.female_sum / table_df.trans_count
     table_df['f_m_ratio'] = table_df.female_mean / table_df.male_mean
     print('done 2')
-    # out_df = pd.merge(len_dict_df, table_df, on = 'scaffold')
-    #
-    # out_df.to_csv(args.output_file, sep='\t', index=False)
-    table_df.to_csv(args.output_file, sep='\t', index=False)
-    print('done 3')
+    out_df = pd.merge(len_dict_df, table_df, on = 'scaffold')
+
+    out_df.to_csv(args.output_file, sep='\t', index=False)
+    # table_df.to_csv(args.output_file, sep='\t', index=False)
+    # print('done 3')
 
 
 
