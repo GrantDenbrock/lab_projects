@@ -1,3 +1,4 @@
+import argparse
 import pandas as pd
 import numpy as np
 import matplotlib
@@ -6,42 +7,109 @@ import matplotlib.mlab as mlab
 import matplotlib.pyplot as plt
 
 
-inputfile = "~/lab_projects/test.txt" #FIXME implement args for this
+#~~~~~~~~ Let's get some args going ~~~~~~~~~~~~~~~~~~~
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description="This script takes a csv from gila_expression and plots the count of f_m_ratio of fpkm.")
 
-df = pd.read_csv(inputfile, sep = '\t') #reads our input file into a df
-df_no_inf = df[~df.isin([np.nan, np.inf, -np.inf]).any(1)] #gets rid of nans and infs
-df_list=df_no_inf['f_m_ratio'].tolist() #throws it into a list for plotting
+    parser.add_argument(
+        '--input_file', nargs='+', dest='input_file',  help = 'Enter the name of csv to make a plot from.')
 
-df_nan = df.loc[pd.isnull(df.f_m_ratio)] #makes a dataframe of all the nan values. For later reference
-df_nan.to_html('nan_gila.html')
+    parser.add_argument(
+        '--num_bins', required=True, default = 1000,
+        help="Enter the desired number of bins for your histogram.")
 
-df_inf = df[df.isin([np.nan, np.inf, -np.inf]).any(1)] #makes a dataframe of the inf values For later reference
-df_inf.to_html('inf_gila.html')
+    parser.add_argument(
+        '--range', default = 4,
+        help = "Enter the desired upper limit for the range of your histogram.")
 
-num_bins = 1000 #FIXME implement args
+    parser.add_argument(
+        '--color', default = 'orange',
+        help="Enter the color of the bars of your histogram.")
 
-fig, ax = plt.subplots()
+    parser.add_argument(
+        '--output_file', required=True,
+        help="Name of and full path to output histogram plot. Will overwrite if already exists.")
 
-# the histogram of the data
-n, bins, patches = ax.hist(df_list, num_bins, color='orange', range = (0,3)) #FIXME implement args
+    args = parser.parse_args()
 
-ax.set_xlabel('Female/Male FPKM Ratio')
-ax.set_ylabel('Count')
-ax.set_title(r'Count of Female to Male Ratio')
+    return args
+#~~~~~~~~~~ and for the script ~~~~~~~~~~~~~~~~~~~~~~
+def main():
 
-# Tweak spacing to prevent clipping of ylabel
-fig.tight_layout()
-plt.show()
-fig.savefig('histogram_f_m_fpkm_count_0_3.png')
+    args = parse_args()
 
-#now make a second histogram of a different window
-n, bins, patches = ax.hist(df_list, num_bins, color='orange', range = (0,5)) #FIXME implement args
+    inputfile = args.input_file[0]
+    print(inputfile)
+    num_bins = args.num_bins
+    print(num_bins)
 
-ax.set_xlabel('Female/Male FPKM Ratio')
-ax.set_ylabel('Count')
-ax.set_title(r'Count of Female to Male Ratio')
 
-# Tweak spacing to prevent clipping of ylabel
-fig.tight_layout()
-plt.show()
-fig.savefig('histogram_f_m_fpkm_count_0_5.png')
+    df = pd.read_csv(inputfile, sep = '\t') #reads our input file into a df
+    df_no_inf = df[~df.isin([np.nan, np.inf, -np.inf]).any(1)] #gets rid of nans and infs
+    df_list=df_no_inf['f_m_ratio'].tolist() #throws it into a list for plotting
+
+    df_nan = df.loc[pd.isnull(df.f_m_ratio)] #makes a dataframe of all the nan values. For later reference
+    df_nan.to_html('nan_gila.html')
+
+    df_inf = df[df.isin([np.nan, np.inf, -np.inf]).any(1)] #makes a dataframe of the inf values For later reference
+    df_inf.to_html('inf_gila.html')
+
+
+    fig, ax = plt.subplots()
+
+    # the histogram of the data
+    n, bins, patches = ax.hist(df_list, int(num_bins), color = args.color, range = (0,args.range))
+
+    ax.set_xlabel('Female/Male FPKM Ratio')
+    ax.set_ylabel('Count')
+    ax.set_title(r'Count of Female to Male Ratio')
+
+    # Tweak spacing to prevent clipping of ylabel
+    fig.tight_layout()
+    plt.show()
+    fig.savefig(args.output_file)
+
+if __name__ == "__main__":
+    main()
+#~~~~~~~~~~~~~~~~ deleting all of this below ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# inputfile = args.input_file
+#
+# df = pd.read_csv(inputfile, sep = '\t') #reads our input file into a df
+# df_no_inf = df[~df.isin([np.nan, np.inf, -np.inf]).any(1)] #gets rid of nans and infs
+# df_list=df_no_inf['f_m_ratio'].tolist() #throws it into a list for plotting
+#
+# df_nan = df.loc[pd.isnull(df.f_m_ratio)] #makes a dataframe of all the nan values. For later reference
+# df_nan.to_html('nan_gila.html')
+#
+# df_inf = df[df.isin([np.nan, np.inf, -np.inf]).any(1)] #makes a dataframe of the inf values For later reference
+# df_inf.to_html('inf_gila.html')
+#
+# num_bins = args.num_bins
+#
+# fig, ax = plt.subplots()
+#
+# # the histogram of the data
+# n, bins, patches = ax.hist(df_list, num_bins, color = args.color, range = args.range)
+#
+# ax.set_xlabel('Female/Male FPKM Ratio')
+# ax.set_ylabel('Count')
+# ax.set_title(r'Count of Female to Male Ratio')
+#
+# # Tweak spacing to prevent clipping of ylabel
+# fig.tight_layout()
+# plt.show()
+# fig.savefig(args.output_file)
+
+# #FIXME will probably remove this and just run the script twice...
+# #now make a second histogram of a different window
+# n, bins, patches = ax.hist(df_list, num_bins, color='orange', range = (0,5)) #FIXME implement args
+#
+# ax.set_xlabel('Female/Male FPKM Ratio')
+# ax.set_ylabel('Count')
+# ax.set_title(r'Count of Female to Male Ratio')
+#
+# # Tweak spacing to prevent clipping of ylabel
+# fig.tight_layout()
+# plt.show()
+# fig.savefig('histogram_f_m_fpkm_count_0_5.png')
