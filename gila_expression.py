@@ -98,17 +98,15 @@ def main():
     print(len(t_ids))
     table_df = pd.DataFrame.from_dict(out_dict, orient='index').reset_index()
     table_df = table_df.rename(index=str, columns={'index': 'scaffold','count': 'trans_count', 'm_sum': 'male_sum', 'f_sum': 'female_sum'})
-    table_df['male_mean'] = table_df.male_sum / table_df.trans_count
-    table_df['female_mean'] = table_df.female_sum / table_df.trans_count
-    table_df['f_m_ratio'] = table_df.female_mean / table_df.male_mean
+    table_df['male_mean_exp'] = table_df.male_sum / table_df.trans_count
+    table_df['female_mean_exp'] = table_df.female_sum / table_df.trans_count
+    table_df['f_m_ratio_exp'] = table_df.female_mean_exp / table_df.male_mean_exp
     print('done 2')
     out_df = pd.merge(len_dict_df, table_df, on = 'scaffold')
 
     out_df.to_csv(args.output_file, sep='\t', index=False)
-    # table_df.to_csv(args.output_file, sep='\t', index=False)
-    # print('done 3')
-
-
 
 if __name__ == "__main__":
     main()
+
+#use it like: python gila_expression.py --sex male male female female --input_files t_data_10.ctab t_data_16.ctab t_data_30.ctab t_data_35.ctab --output_file gila_expression_1.txt --fai gila2.fasta.fai
