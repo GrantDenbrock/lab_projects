@@ -13,7 +13,13 @@ def parse_args():
         description="This script takes a csv from gila_expression and plots the count of f_m_ratio of fpkm.")
 
     parser.add_argument(
-        '--input_file', nargs='+', dest='input_file',  help = 'Enter the name of csv to make a plot from.')
+        '--input_file', dest='input_file',  help = 'Enter the name of csv to make a plot from.')
+
+    parser.add_argument(
+        '--nan_html_output', help = 'Enter the name to be used for an html dataframe of NaNs.')
+
+    parser.add_argument(
+        '--inf_html_output', help = 'Enter the name to be used for an html dataframe of infs.')
 
     parser.add_argument(
         '--num_bins', required=True, default = 1000,
@@ -39,10 +45,8 @@ def main():
 
     args = parse_args()
 
-    inputfile = args.input_file[0]
-    print(inputfile)
+    inputfile = args.input_file
     num_bins = args.num_bins
-    print(num_bins)
 
 
     df = pd.read_csv(inputfile, sep = '\t') #reads our input file into a df
@@ -50,10 +54,10 @@ def main():
     df_list=df_no_inf['f_m_ratio'].tolist() #throws it into a list for plotting
 
     df_nan = df.loc[pd.isnull(df.f_m_ratio)] #makes a dataframe of all the nan values. For later reference
-    df_nan.to_html('nan_gila.html')
+    df_nan.to_html(args.nan_html_output)
 
     df_inf = df[df.isin([np.nan, np.inf, -np.inf]).any(1)] #makes a dataframe of the inf values For later reference
-    df_inf.to_html('inf_gila.html')
+    df_inf.to_html(args.inf_html_output)
 
 
     fig, ax = plt.subplots()
@@ -72,3 +76,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+#~~~~~~~~~~~~~~Run Me~~~~~~~~~~~~~~
+
+#    python gila_plot.py --input_file gila_expression_1.txt --nan_html_output gila_plot_nan_df.html --inf_html_output gila_plot_inf_df.html  --num_bins 1000 --range 4 --output_file gila_plot_figure.png
