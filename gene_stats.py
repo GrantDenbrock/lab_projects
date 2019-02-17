@@ -130,6 +130,18 @@ def count_genes(chroms_to_inspect, dataframe):
         if str(chrom) in chrom_count_dict:
             print(chrom, " : ", chrom_count_dict[str(chrom)]) #FIXME I dont want this to always print. Just for prototyping
 
+#going to put the genes per scaffold into a dictionary because dicts and dataframes play nicely together
+def gene_name_dict(dataframe):
+    gene_name_dict = {}
+    for x in range(len(dataframe)):
+        currentid = dataframe.iloc[x,0]
+        currentvalue = dataframe.iloc[x,11]
+        gene_name_dict.setdefault(currentid, [])
+        gene_name_dict[currentid].append(currentvalue)
+    return(gene_name_dict)
+
+
+
 def main():
     new_df = dataframe('Gila.gff3') #makes the dataframe out of our gff file
     gene_df = new_df[new_df.feature == 'gene'] #make new dataframe that contains only the gene features
@@ -139,9 +151,7 @@ def main():
     print('~~~~~~~~~~~~~~Output of gene count~~~~~~~~~~~~~~~~~~~')
     putative_sex_chroms = [157,218,304,398,674,220562] # list of putative sex chroms
     count_genes(putative_sex_chroms,gene_df) # will output the number of genes attributed to each putative sex chrom
-    #now if we want gene count for all scaffolds...
-    all_scaffolds = set(gene_df.seqname) #list of all scaffolds FIXME frozenset? mutability doesnt really matter here
-    #and can now pass this into count_genes...
+    print(gene_name_dict(gene_df))
 
 if __name__ == "__main__":
     main()
