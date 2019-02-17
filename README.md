@@ -8,7 +8,7 @@ This series of scripts is written to organize and perform calculations on DNA an
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~gila_chromstats.py~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 This script takes a list of input bam files, casts data from these files into dataframes, and plots the female to male ratio of coverage across scaffolds.
 
-This script requires an input file of count per scaffold per sample. #FIXME? This file comes out of the "rule chromstats dna:". The user can indicate the full path to the file using the flag: --input_file.
+This script requires an input file of count per scaffold per sample that comes out of the "rule chromstats dna:". The user can indicate the full path to the file using the flag: --input_file.
 
 --input_file ~/lab_projects/gila1_chrom_stats_count.txt
 
