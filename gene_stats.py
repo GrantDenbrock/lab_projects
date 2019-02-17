@@ -1,9 +1,9 @@
 
 #!/usr/bin/env python
 #https://gist.github.com/slowkow/8101481
-##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #Borrowing part of this script from Kamil Slowikowski credited below. His script neatly strips data from gff3 format into a dataframe.
-##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 """
 GTF.py
 Kamil Slowikowski
