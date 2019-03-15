@@ -193,10 +193,10 @@ def main():
     for chrom in all_chroms: #for each entry in all chroms (and since each seq name corresponds to one gene)
         cnt[chrom]+=1 # tally it and add it to the counter object
     #write it out to csv
-    with open('gene_count_per_scaffold.csv', encoding='utf-8-sig', mode='w') as fp:
-        fp.write('chrom,count\n')
-        for tag, count in cnt.items():
-            fp.write('{},{}\n'.format(tag, count))
+    with open('gene_count_per_scaffold.csv', encoding='utf-8-sig', mode='w') as csvfile:
+        csvfile.write('chrom,count\n')
+        for chrom, count in cnt.items():
+            fp.write('{},{}\n'.format(chrom, count))
 
     # #need to get the gene names for genes located on putative sex scaffolds
     # putative_sex_chroms = [157,218,304,398,674,220562] # list of putative sex chroms
